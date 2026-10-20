@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% from "macros.html" import icon, entry_card, kind_badge %}
+{% block title %}{% if filters.q %}{{ filters.q|truncate(60) }} · {% endif %}Registry{% if filters.page > 1 %} · Page {{ filters.page }}{% endif %} · Alexandria{% endblock %}
+{% block description %}Browse the published skills and grounding packages in this Alexandria registry.{% endblock %}
+{% block content %}
+<div class="container page-head">
+  <h1>Registry</h1>
+  <p class="lead lead--small">Published skills and grounding. Search by name, description or tag, then narrow by kind, category or tag.</p>
+</div>
+
+<div class="container registry">
+  <form class="searchbar" method="get" action="/registry" role="search">
+    <div class="searchbar__field">
+      <label class="visually-hidden" for="q">Search the registry</label>
+      {{ icon("search") }}
+      <input id="q" type="search" name="q" value="{{ filters.q }}" placeholder="Search by name, description or tag" autocomplete="off" maxlength="512">
+    </div>
+    {% if filters.kind %}
+    <input type="hidden" name="kind" value="{{ filters.kind }}">
+    {% endif %}
+    {% if filters.category %}
+    <input type="hidden" name="category" value="{{ filters.category }}">
+    {% endif %}
+    {% for tag in filters.tags %}
+    <input type="hidden" name="tag" value="{{ tag }}">
+    {% endfor %}
+    <div class="searchbar__sort">
+      <label for="sort">Sort by</label>
+      <select id="sort" name="sort" data-autosubmit>
+        {% for option in sorts %}
+        <option value="{{ option }}"{% if option == (filters.sort or default_sort) %} selected{% endif %}>{{ sort_label(option) }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <button class="button button--primary" type="submit">Search</button>
+  </form>
+
+  <div class="registry__layout">
+    <aside class="facets" aria-label="Filters">
+      <a class="skip-link" href="#results">Skip filters</a>
+      <details class="filters" open data-collapse-narrow>
+        <summary>Filters{% if chips %} <span class="count">{{ chips|length }} active</span>{% endif %}</summary>
+        <div class="filters__body">
+          <section class="facet" aria-labelledby="facet-kind">
+            <h2 id="facet-kind">Kind</h2>
+            <ul class="facet__list">
+              <li><a href="{{ all_url }}"{% if not filters.kind %} aria-current="true"{% endif %}><span class="facet__label">All kinds</span></a></li>
+              {% for item in kinds %}
+              <li><a href="{{ item.url }}"{% if filters.kind == item.name %} aria-current="true"{% endif %}><span class="facet__label">{{ icon(item.name) }}{{ kind_label(item.name) }}</span></a></li>
+              {% endfor %}
+            </ul>
+          </section>
+          {% if category_facets %}
+          <section class="facet" aria-labelledby="facet-category">
+            <h2 id="facet-category">Category</h2>
+            <ul class="facet__list">
+              {% for item in category_facets %}
+              <li><a href="{{ item.url }}"{% if item.active %} aria-current="true"{% endif %}><span class="facet__label">{{ item.name }}</span>{% if item.count is not none %} <span class="count">{{ item.count }}</span>{% endif %}</a></li>
+              {% endfor %}
+            </ul>
+          </section>
+          {% endif %}
+          {% if tag_facets %}
+          <section class="facet" aria-labelledby="facet-tags">
+            <h2 id="facet-tags">Tags</h2>
+            <ul class="chips chips--facet">
+              {% for item in tag_facets %}
+              <li><a class="chip" href="{{ item.url }}"{% if item.active %} aria-current="true"{% endif %}><span class="chip__label">{{ item.name }}</span>{% if item.count is not none %} <span class="count">{{ item.count }}</span>{% endif %}</a></li>
+              {% endfor %}
+            </ul>
+          </section>
+          {% endif %}
+        </div>
+      </details>
+    </aside>
+
+    <section class="results" id="results" tabindex="-1" aria-labelledby="results-title">
+      <div class="results__head">
+        <h2 id="results-title">{{ result.total|plural("entry", "entries") }}</h2>
+        {% if result.total and result.items %}
+        <p class="results__range">Showing {{ pager.first }}&ndash;{{ pager.last }}</p>
+        {% endif %}
+      </div>
+      {% if chips %}
+      <ul class="chips chips--active" aria-label="Active filters">
+        {% for chip in chips %}
+        <li><a class="chip chip--remove" href="{{ chip.url }}">{{ chip.label }}{{ icon("close") }}<span class="visually-hidden"> (remove filter)</span></a></li>
+        {% endfor %}
+        <li><a class="clear" href="/registry">Clear all</a></li>
+      </ul>
+      {% endif %}
+
+      {% if result.items %}
+      <ol class="cards">
+        {% for skill in result.items %}
+        <li>{{ entry_card(skill) }}</li>
+        {% endfor %}
+      </ol>
+      {% elif result.total %}
+      <div class="empty">
+        <p class="empty__title">There is nothing on this page.</p>
+        <p>The results end on page {{ pager.pages }}. <a href="{{ pager.last_url }}">Go to the last page</a>.</p>
+      </div>
+      {% elif filters.active %}
+      <div class="empty">
+        <p class="empty__title">No entries match these filters.</p>
+        <p>Try a different search, or <a href="/registry">clear all filters</a>.</p>
+      </div>
+      {% else %}
+      <div class="empty">
+        <p class="empty__title">Nothing has been published yet.</p>
+        <p>Packages appear here once an author publishes a version. See the <a href="/docs">API reference</a> to upload one.</p>
+      </div>
+      {% endif %}
+
+      {% if pager.pages > 1 %}
+      <nav class="pager" aria-label="Pagination">
+        {% if pager.previous %}
+        <a class="pager__step" rel="prev" href="{{ pager.previous }}">{{ icon("prev") }}Previous</a>
+        {% else %}
+        <span class="pager__step is-disabled" aria-hidden="true">{{ icon("prev") }}Previous</span>
+        {% endif %}
+        <ol class="pager__numbers">
+          {% for item in pager.numbers %}
+          {% if item is none %}
+          <li class="pager__gap" aria-hidden="true">&hellip;</li>
+          {% elif item.number == pager.current %}
+          <li><a class="is-current" href="{{ item.url }}" aria-current="page"><span class="visually-hidden">Page </span>{{ item.number }}</a></li>
+          {% else %}
+          <li><a href="{{ item.url }}"><span class="visually-hidden">Page </span>{{ item.number }}</a></li>
+          {% endif %}
+          {% endfor %}
+        </ol>
+        {% if pager.next %}
+        <a class="pager__step" rel="next" href="{{ pager.next }}">Next{{ icon("next") }}</a>
+        {% else %}
+        <span class="pager__step is-disabled" aria-hidden="true">Next{{ icon("next") }}</span>
+        {% endif %}
+      </nav>
+      {% endif %}
+    </section>
+  </div>
+</div>
+{% endblock %}

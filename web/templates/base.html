@@ -1,0 +1,51 @@
+{% from "macros.html" import logo %}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f7f4ed" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#14120f" media="(prefers-color-scheme: dark)">
+<title>{% block title %}Alexandria{% endblock %}</title>
+<meta name="description" content="{% block description %}A versioned registry of skills and grounding packages for AI agents.{% endblock %}">
+{% if robots %}
+<meta name="robots" content="{{ robots }}">
+{% endif %}
+{% if canonical %}
+<link rel="canonical" href="{{ canonical }}">
+{% endif %}
+<link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
+<link rel="stylesheet" href="{{ asset('style.css') }}">
+<script src="{{ asset('site.js') }}" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a class="brand" href="/">{{ logo() }}<span class="brand__name">Alexandria</span></a>
+    <nav class="site-nav" aria-label="Main">
+      <ul>
+        <li><a href="/registry"{% if nav == "registry" %} aria-current="page"{% endif %}>Registry</a></li>
+        <li><a href="/docs">API reference</a></li>
+        <li><a href="/admin/">Admin</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<main id="main" tabindex="-1">
+{% block content %}{% endblock %}
+</main>
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <p class="site-footer__brand">{{ logo() }}<span>Alexandria, a registry of skills and grounding for AI agents.</span></p>
+    <ul class="site-footer__links">
+      <li><a href="/registry">Registry</a></li>
+      <li><a href="/docs">API reference</a></li>
+      <li><a href="/admin/">Admin</a></li>
+    </ul>
+    <p class="site-footer__endpoint">MCP endpoint <code>{{ public_url }}/mcp</code></p>
+  </div>
+</footer>
+</body>
+</html>

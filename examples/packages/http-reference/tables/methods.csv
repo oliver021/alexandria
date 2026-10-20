@@ -1,0 +1,10 @@
+method,safe,idempotent,typical_success,summary,rfc
+GET,yes,yes,200,"Transfer a current representation of the target resource.",RFC 9110
+HEAD,yes,yes,200,"Same as GET but the response has no body; used to read headers and check existence.",RFC 9110
+POST,no,no,"201, 200 or 202","Process the request body according to the semantics of the target resource, for example create a resource or start an action.",RFC 9110
+PUT,no,yes,"200, 201 or 204","Replace the state of the target resource with the request body, creating it when it does not exist.",RFC 9110
+DELETE,no,yes,"204, 200 or 202","Remove the association between the target URI and its resource.",RFC 9110
+CONNECT,no,no,200,"Establish a tunnel to the destination server; used by proxies.",RFC 9110
+OPTIONS,yes,yes,"200 or 204","Describe the communication options available for the target resource.",RFC 9110
+TRACE,yes,yes,200,"Perform a message loop-back test along the path to the target resource.",RFC 9110
+PATCH,no,no,"200 or 204","Apply a partial modification to the target resource.",RFC 5789

@@ -1,0 +1,47 @@
+server:
+  host: "0.0.0.0"
+  port: 8000
+  reload: true
+  public_url: "http://localhost:8000"
+
+database:
+  driver: sqlite
+  path: "data/alexandria.db"
+  pool_size: 5
+  max_overflow: 10
+  pool_timeout: 30
+  auto_migrate: true
+
+storage:
+  backend: local
+  path: "data/blobs"
+
+auth:
+  provider: local
+  signup: disabled
+  jwt_algorithm: "HS256"
+  jwt_expiry_minutes: 60
+
+registry:
+  public_read: true
+  auto_publish: false
+  limits:
+    max_package_bytes: 26214400
+    max_uncompressed_bytes: 104857600
+    max_file_bytes: 52428800
+    max_files: 2000
+    max_inline_read_bytes: 262144
+
+tokens:
+  max_per_user: 20
+
+cors:
+  allowed_origins:
+    - "http://localhost:8000"
+    - "http://localhost:5173"
+  allow_credentials: true
+  allow_methods: ["*"]
+  allow_headers: ["*"]
+
+logging:
+  level: INFO

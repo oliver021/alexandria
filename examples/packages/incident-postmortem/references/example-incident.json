@@ -1,0 +1,35 @@
+{
+  "title": "Search results were empty for most users",
+  "incident_id": "INC-2026-041",
+  "severity": "SEV2",
+  "status": "resolved",
+  "started_at": "2026-10-02T09:14:00Z",
+  "resolved_at": "2026-10-02T10:26:00Z",
+  "summary": "A deploy of the search service changed the name of an index field. Queries kept running but matched nothing, so most users saw empty results for 72 minutes. Service was restored by rolling the deploy back.\n\nNo data was lost.",
+  "impact": "About 85% of search requests returned zero results between 09:14 and 10:26 UTC. Checkout was not affected. Support received 143 tickets, 12 of them from customers on the priority plan.",
+  "root_cause": "The field rename shipped together with the code that reads it, but the index in production still used the old name. The deploy pipeline had no check that compared the index mapping with the code, and the smoke test only verified that the endpoint answered with status 200.\n\nThe alert on zero-result searches existed but was routed to a channel nobody watched, so detection came from customer reports.",
+  "timeline": [
+    {"time": "09:02", "event": "Version 4.8.0 of the search service is deployed to production."},
+    {"time": "09:14", "event": "The share of searches with zero results rises from 4% to 85%."},
+    {"time": "09:31", "event": "A support engineer reports many tickets about empty results; an incident is opened."},
+    {"time": "09:40", "event": "The on-call engineer sees the zero-result alert in an unwatched channel and confirms the impact."},
+    {"time": "09:58", "event": "The index mapping is identified as the difference between staging and production."},
+    {"time": "10:12", "event": "The decision is taken to roll back instead of reindexing."},
+    {"time": "10:26", "event": "Version 4.7.3 is live again and the zero-result rate returns to 4%."}
+  ],
+  "what_went_well": [
+    "The rollback procedure worked on the first attempt and took 14 minutes.",
+    "Support gave clear examples that made the problem easy to reproduce."
+  ],
+  "what_went_wrong": [
+    "Detection took 17 minutes and depended on customers, not on alerts.",
+    "Staging used a different index mapping than production, so the problem could not appear before release.",
+    "The smoke test accepted an empty but successful answer."
+  ],
+  "action_items": [
+    {"owner": "Search team", "action": "Add a deploy check that compares the index mapping with the fields used by the code", "due": "2026-10-16"},
+    {"owner": "SRE team", "action": "Route the zero-result alert to the paging rotation", "due": "2026-10-09"},
+    {"owner": "Search team", "action": "Make the smoke test assert that a known query returns at least one result", "due": "2026-10-23"},
+    {"owner": "Platform team", "action": "Rebuild the staging index from the production mapping every night", "due": "2026-11-06"}
+  ]
+}

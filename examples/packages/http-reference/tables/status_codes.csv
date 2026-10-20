@@ -1,0 +1,54 @@
+code,name,class,summary,cacheable_by_default,rfc
+100,Continue,informational,"The first part of the request was received; the client should keep sending the body or ignore this interim response.",no,RFC 9110
+101,Switching Protocols,informational,"The server agrees to switch to the protocol named in the Upgrade header, for example WebSocket.",no,RFC 9110
+103,Early Hints,informational,"Interim response with Link headers so the client can start preloading resources before the final response.",no,RFC 8297
+200,OK,success,"The request succeeded; what the body contains depends on the method.",yes,RFC 9110
+201,Created,success,"A new resource was created; the Location header should identify it.",no,RFC 9110
+202,Accepted,success,"The request was accepted for processing that has not finished; the outcome is not guaranteed.",no,RFC 9110
+203,Non-Authoritative Information,success,"A transforming proxy modified the 200 response of the origin server.",yes,RFC 9110
+204,No Content,success,"The request succeeded and there is no body to send; typical for DELETE and for updates that return nothing.",yes,RFC 9110
+205,Reset Content,success,"The request succeeded and the client should reset the document view that sent it.",no,RFC 9110
+206,Partial Content,success,"Only the requested byte range is returned, in answer to a Range request.",yes,RFC 9110
+207,Multi-Status,success,"The body carries several independent status codes, one per sub-operation (WebDAV).",no,RFC 4918
+300,Multiple Choices,redirection,"Several representations are available and the client or user has to pick one.",yes,RFC 9110
+301,Moved Permanently,redirection,"The resource has a new permanent URI; clients should update their links.",yes,RFC 9110
+302,Found,redirection,"Temporary redirect; clients may change a POST into a GET when following it.",no,RFC 9110
+303,See Other,redirection,"The result is at another URI and must be fetched with GET; often used after a POST.",no,RFC 9110
+304,Not Modified,redirection,"A conditional GET or HEAD found the cached copy still valid, so no body is sent.",no,RFC 9110
+307,Temporary Redirect,redirection,"Temporary redirect that keeps the method and the body of the request.",no,RFC 9110
+308,Permanent Redirect,redirection,"Permanent redirect that keeps the method and the body of the request.",yes,RFC 9110
+400,Bad Request,client_error,"The server cannot process the request because of a client error such as malformed syntax.",no,RFC 9110
+401,Unauthorized,client_error,"Credentials are missing or invalid; the response carries a WWW-Authenticate header.",no,RFC 9110
+402,Payment Required,client_error,"Reserved for future use; some APIs use it to signal billing limits.",no,RFC 9110
+403,Forbidden,client_error,"The server understood the request but refuses to authorize it; authenticating again will not help.",no,RFC 9110
+404,Not Found,client_error,"The target resource does not exist, or the server does not want to reveal that it does.",yes,RFC 9110
+405,Method Not Allowed,client_error,"The method is known but not supported for this resource; the Allow header lists the valid ones.",yes,RFC 9110
+406,Not Acceptable,client_error,"No representation matches the Accept headers of the request.",no,RFC 9110
+407,Proxy Authentication Required,client_error,"The client must authenticate with the proxy first.",no,RFC 9110
+408,Request Timeout,client_error,"The server gave up waiting for the request; the client may repeat it.",no,RFC 9110
+409,Conflict,client_error,"The request conflicts with the current state of the resource, for example a duplicate or an edit collision.",no,RFC 9110
+410,Gone,client_error,"The resource existed once and was removed on purpose; no forwarding address is known.",yes,RFC 9110
+411,Length Required,client_error,"The server refuses the request without a Content-Length header.",no,RFC 9110
+412,Precondition Failed,client_error,"A condition in If-Match, If-Unmodified-Since or a similar header evaluated to false.",no,RFC 9110
+413,Content Too Large,client_error,"The request body is larger than the server is willing to process (formerly Payload Too Large).",no,RFC 9110
+414,URI Too Long,client_error,"The target URI is longer than the server is willing to interpret.",yes,RFC 9110
+415,Unsupported Media Type,client_error,"The content type or content encoding of the request is not supported for this resource.",no,RFC 9110
+416,Range Not Satisfiable,client_error,"None of the ranges in the Range header overlap the current size of the resource.",no,RFC 9110
+417,Expectation Failed,client_error,"The server cannot meet the expectation given in the Expect header.",no,RFC 9110
+421,Misdirected Request,client_error,"The request reached a server that cannot produce a response for that URI.",no,RFC 9110
+422,Unprocessable Content,client_error,"The syntax is right but the content fails semantic validation (formerly Unprocessable Entity).",no,RFC 9110
+423,Locked,client_error,"The resource is locked (WebDAV).",no,RFC 4918
+425,Too Early,client_error,"The server will not risk processing a request that might be replayed.",no,RFC 8470
+426,Upgrade Required,client_error,"The client must switch to another protocol; the Upgrade header names it.",no,RFC 9110
+428,Precondition Required,client_error,"The server requires the request to be conditional, which prevents lost updates.",no,RFC 6585
+429,Too Many Requests,client_error,"The client sent too many requests in a given time; Retry-After may say when to try again.",no,RFC 6585
+431,Request Header Fields Too Large,client_error,"The headers are too large, either one of them or all together.",no,RFC 6585
+451,Unavailable For Legal Reasons,client_error,"The resource is blocked because of a legal demand.",no,RFC 7725
+500,Internal Server Error,server_error,"The server hit an unexpected condition and could not fulfil the request.",no,RFC 9110
+501,Not Implemented,server_error,"The server does not support the functionality needed, for example an unknown method.",yes,RFC 9110
+502,Bad Gateway,server_error,"A gateway or proxy received an invalid response from the upstream server.",no,RFC 9110
+503,Service Unavailable,server_error,"The server is temporarily unable to handle the request because of overload or maintenance; Retry-After may be sent.",no,RFC 9110
+504,Gateway Timeout,server_error,"A gateway or proxy did not get a timely response from the upstream server.",no,RFC 9110
+505,HTTP Version Not Supported,server_error,"The server does not support the HTTP version used in the request.",no,RFC 9110
+507,Insufficient Storage,server_error,"The server cannot store the representation needed to complete the request (WebDAV).",no,RFC 4918
+511,Network Authentication Required,server_error,"The client must authenticate to gain network access, as in a captive portal.",no,RFC 6585

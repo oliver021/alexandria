@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Postmortem {{incident_id}}: {{title}}</title>
+<style>
+  :root { color-scheme: light dark; --line: #8884; --tint: #8881; }
+  body { font: 16px/1.55 system-ui, sans-serif; margin: 0 auto; max-width: 54rem; padding: 2rem 1rem 4rem; }
+  header { border-bottom: 2px solid var(--line); margin-bottom: 1.5rem; padding-bottom: 1rem; }
+  h1 { font-size: 1.7rem; margin: 0 0 0.25rem; }
+  h2 { font-size: 1.15rem; margin: 2rem 0 0.5rem; }
+  .id { font-family: ui-monospace, monospace; opacity: 0.7; }
+  dl { display: grid; gap: 0.25rem 1rem; grid-template-columns: max-content 1fr; margin: 1rem 0 0; }
+  dt { font-weight: 600; }
+  dd { margin: 0; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { border: 1px solid var(--line); padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+  th { background: var(--tint); }
+  td.time { font-family: ui-monospace, monospace; white-space: nowrap; }
+  ul { margin: 0.25rem 0; padding-left: 1.25rem; }
+  footer { border-top: 1px solid var(--line); font-size: 0.85rem; margin-top: 3rem; opacity: 0.7; padding-top: 0.75rem; }
+  @media print { body { max-width: none; padding: 0; } }
+</style>
+</head>
+<body>
+<header>
+<p class="id">{{incident_id}}</p>
+<h1>{{title}}</h1>
+<dl>
+<dt>Severity</dt><dd>{{severity}}</dd>
+<dt>Status</dt><dd>{{status}}</dd>
+<dt>Started</dt><dd>{{started_at}}</dd>
+<dt>Resolved</dt><dd>{{resolved_at}}</dd>
+<dt>Duration</dt><dd>{{duration}}</dd>
+</dl>
+</header>
+
+<section>
+<h2>Summary</h2>
+{{summary}}
+</section>
+
+<section>
+<h2>Impact</h2>
+{{impact}}
+</section>
+
+<section>
+<h2>Root cause</h2>
+{{root_cause}}
+</section>
+
+<section>
+<h2>Timeline (UTC)</h2>
+<table>
+<thead><tr><th>Time</th><th>Event</th></tr></thead>
+<tbody>
+{{timeline_rows}}
+</tbody>
+</table>
+</section>
+
+<section>
+<h2>What went well</h2>
+<ul>
+{{went_well_items}}
+</ul>
+</section>
+
+<section>
+<h2>What went wrong</h2>
+<ul>
+{{went_wrong_items}}
+</ul>
+</section>
+
+<section>
+<h2>Action items</h2>
+<table>
+<thead><tr><th>Owner</th><th>Action</th><th>Due</th></tr></thead>
+<tbody>
+{{action_rows}}
+</tbody>
+</table>
+</section>
+
+<footer>Blameless postmortem. The goal is to improve systems and processes, not to assign fault.</footer>
+</body>
+</html>

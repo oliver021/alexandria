@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HTTP status cheat sheet</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font: 16px/1.5 system-ui, sans-serif; margin: 0 auto; max-width: 52rem; padding: 1.5rem 1rem 3rem; }
+  h1 { font-size: 1.6rem; margin-bottom: 0.25rem; }
+  h2 { font-size: 1.2rem; margin-top: 2rem; }
+  p.lead { margin-top: 0; opacity: 0.75; }
+  table { border-collapse: collapse; width: 100%; margin: 0.75rem 0; }
+  th, td { border: 1px solid #8884; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+  th { background: #8881; }
+  code { font-family: ui-monospace, monospace; }
+  .class { font-weight: 600; white-space: nowrap; }
+  ol li { margin-bottom: 0.35rem; }
+</style>
+</head>
+<body>
+<h1>HTTP status cheat sheet</h1>
+<p class="lead">A one page companion to the tables of the http-reference package. The complete data lives in <code>tables/status_codes.csv</code>.</p>
+
+<h2>The five classes</h2>
+<table>
+<thead><tr><th>Class</th><th>Meaning</th><th>Codes you will use most</th></tr></thead>
+<tbody>
+<tr><td class="class">1xx informational</td><td>The request was received and the process continues.</td><td><code>100</code>, <code>101</code>, <code>103</code></td></tr>
+<tr><td class="class">2xx success</td><td>The request was understood and accepted.</td><td><code>200</code>, <code>201</code>, <code>202</code>, <code>204</code></td></tr>
+<tr><td class="class">3xx redirection</td><td>The client has to take another step to finish.</td><td><code>301</code>, <code>304</code>, <code>307</code>, <code>308</code></td></tr>
+<tr><td class="class">4xx client error</td><td>The request cannot be fulfilled as sent. Repeating it unchanged will not help.</td><td><code>400</code>, <code>401</code>, <code>403</code>, <code>404</code>, <code>409</code>, <code>422</code>, <code>429</code></td></tr>
+<tr><td class="class">5xx server error</td><td>The server failed on a valid request. Retrying later may work.</td><td><code>500</code>, <code>502</code>, <code>503</code>, <code>504</code></td></tr>
+</tbody>
+</table>
+
+<h2>Choosing a status for an error</h2>
+<ol>
+<li>Is the credential missing or invalid? Send <code>401</code> with <code>WWW-Authenticate</code>.</li>
+<li>Is the caller known but not allowed? Send <code>403</code>, or <code>404</code> to hide that the resource exists.</li>
+<li>Does the resource not exist? Send <code>404</code>. If it was removed on purpose, <code>410</code>.</li>
+<li>Is the body unreadable? Send <code>400</code>. Is it readable but invalid? Send <code>422</code>.</li>
+<li>Does the request clash with the current state? Send <code>409</code>, or <code>412</code> when an <code>If-Match</code> condition failed.</li>
+<li>Is the client going too fast? Send <code>429</code> with <code>Retry-After</code>.</li>
+<li>Did the server fail? Send <code>500</code>. If an upstream dependency failed, <code>502</code> or <code>504</code>. If it is overloaded, <code>503</code>.</li>
+</ol>
+
+<h2>Methods at a glance</h2>
+<table>
+<thead><tr><th>Method</th><th>Safe</th><th>Idempotent</th></tr></thead>
+<tbody>
+<tr><td><code>GET</code>, <code>HEAD</code>, <code>OPTIONS</code>, <code>TRACE</code></td><td>yes</td><td>yes</td></tr>
+<tr><td><code>PUT</code>, <code>DELETE</code></td><td>no</td><td>yes</td></tr>
+<tr><td><code>POST</code>, <code>PATCH</code>, <code>CONNECT</code></td><td>no</td><td>no</td></tr>
+</tbody>
+</table>
+<p>Safe means the method does not ask the server to change anything. Idempotent means that sending the same request several times leaves the server in the same state as sending it once.</p>
+</body>
+</html>

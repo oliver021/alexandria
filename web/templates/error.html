@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% from "macros.html" import icon %}
+{% block title %}{{ status }} {{ title }} · Alexandria{% endblock %}
+{% block description %}{{ title }}{% endblock %}
+{% block content %}
+<section class="container errorpage" aria-labelledby="error-title">
+  <p class="errorpage__code" aria-hidden="true">{{ status }}</p>
+  <h1 id="error-title">{{ title }}</h1>
+  <p class="lead lead--small">{{ detail }}</p>
+  <p class="actions">
+    {% if status == 401 %}
+    <a class="button button--primary" href="/docs">API reference</a>
+    <a class="button" href="/">Home</a>
+    {% else %}
+    <a class="button button--primary" href="/registry">{{ icon("arrow") }}Browse the registry</a>
+    <a class="button" href="/">Home</a>
+    {% endif %}
+  </p>
+</section>
+{% endblock %}

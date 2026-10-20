@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% from "macros.html" import icon, snippet, entry_card, kind_badge %}
+{% block title %}Alexandria · Skills and grounding for AI agents{% endblock %}
+{% block description %}Alexandria is a versioned registry of skills and grounding packages that AI agents read over MCP and people browse on the web.{% endblock %}
+{% block content %}
+<section class="hero" aria-labelledby="hero-title">
+  <div class="container hero__grid">
+    <div class="hero__text">
+      <p class="kicker">A registry for AI agents</p>
+      <h1 id="hero-title">A versioned library of skills and grounding.</h1>
+      <p class="lead">Alexandria stores packages that agents read over MCP and people browse on the web. A skill tells an agent how to do something. A grounding package gives it facts to rely on. Every version is an immutable zip with a single entry point.</p>
+      <div class="actions">
+        <a class="button button--primary" href="/registry">Browse the registry {{ icon("arrow") }}</a>
+        <a class="button" href="/docs">API reference</a>
+      </div>
+    </div>
+    <figure class="arch">
+      <div class="arch__window">
+        <p class="arch__file">pdf-tools-1.2.0.zip</p>
+        <ul class="arch__tree">
+          <li class="is-entry"><code>SKILL.md</code><span>entry point</span></li>
+          <li><code>scripts/extract.py</code></li>
+          <li><code>references/pdf-spec.md</code></li>
+          <li><code>templates/report.docx</code></li>
+        </ul>
+      </div>
+      <figcaption>An example package: one entry point, then whatever the work needs.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="container ledger" aria-labelledby="ledger-title">
+  <h2 id="ledger-title" class="visually-hidden">Published entries</h2>
+  {% if counts is none %}
+  <p class="notice notice--lock">{{ icon("lock") }}<span>This registry is private. The catalog is not listed on this website: read it through the REST API or the MCP endpoint with an <code>Authorization: Bearer</code> credential.</span></p>
+  {% else %}
+  <dl class="ledger__grid">
+    <div class="ledger__item">
+      <dt><a href="/registry?kind=skill">Skills</a></dt>
+      <dd>{{ counts.skill }}</dd>
+    </div>
+    <div class="ledger__item">
+      <dt><a href="/registry?kind=grounding">Grounding</a></dt>
+      <dd>{{ counts.grounding }}</dd>
+    </div>
+    <div class="ledger__item">
+      <dt><a href="/registry">Published entries</a></dt>
+      <dd>{{ total }}</dd>
+    </div>
+  </dl>
+  {% endif %}
+</section>
+
+<section class="container section" aria-labelledby="kinds-title">
+  <h2 id="kinds-title">Two kinds of entry</h2>
+  <div class="kinds">
+    <article class="kind kind--skill">
+      <p class="kind__badge">{{ kind_badge("skill") }}</p>
+      <h3>Skills are procedural</h3>
+      <p>Instructions an agent follows to get something done, together with the scripts and templates they rely on. The entry point is <code>SKILL.md</code>.</p>
+      <p><a class="more" href="/registry?kind=skill">Browse skills {{ icon("arrow") }}</a></p>
+    </article>
+    <article class="kind kind--grounding">
+      <p class="kind__badge">{{ kind_badge("grounding") }}</p>
+      <h3>Grounding is referential</h3>
+      <p>Material an agent can trust instead of guessing: specifications, tables, schemas, even SQLite databases. The entry point is <code>INDEX.md</code>.</p>
+      <p><a class="more" href="/registry?kind=grounding">Browse grounding {{ icon("arrow") }}</a></p>
+    </article>
+  </div>
+  <ul class="principles">
+    <li>
+      <h3>One zip, one entry point</h3>
+      <p>The entry point opens with a YAML header (name, description, version, tags) followed by Markdown. The rest of the package is free-form. Alexandria stores the zip untouched and never runs anything inside it.</p>
+    </li>
+    <li>
+      <h3>Immutable versions</h3>
+      <p>A version moves from draft to published to deprecated and never changes. <code>latest</code> always resolves to the highest published semantic version.</p>
+    </li>
+    <li>
+      <h3>Verifiable downloads</h3>
+      <p>Every package has a SHA-256 you can check after downloading, and every file in it is listed with its own hash and size.</p>
+    </li>
+  </ul>
+</section>
+
+<section class="container section" aria-labelledby="mcp-title">
+  <h2 id="mcp-title">Connect an agent over MCP</h2>
+  <div class="split">
+    <div class="split__text">
+      <p>Alexandria speaks MCP over Streamable HTTP. Point any MCP client at the endpoint and the registry becomes a set of tools the agent can call.</p>
+      {% if private %}
+      <p>This registry is private, so the client must send an <code>Authorization: Bearer</code> header with a token.</p>
+      {% else %}
+      <p>Reading is anonymous. Publishing needs a token with write scope.</p>
+      {% endif %}
+      <table class="tools">
+        <caption class="visually-hidden">MCP tools</caption>
+        <thead><tr><th scope="col">Tool</th><th scope="col">Does</th></tr></thead>
+        <tbody>
+          <tr><th scope="row"><code>search_skills</code></th><td>Search by text, kind, tags and category</td></tr>
+          <tr><th scope="row"><code>get_skill</code></th><td>An entry with its versions</td></tr>
+          <tr><th scope="row"><code>get_entrypoint</code></th><td>The entry point of a version</td></tr>
+          <tr><th scope="row"><code>list_files</code>, <code>read_file</code></th><td>The manifest, and any text file in it</td></tr>
+          <tr><th scope="row"><code>get_download_info</code></th><td>URL, size and SHA-256 of the zip</td></tr>
+          <tr><th scope="row"><code>list_tags</code>, <code>list_categories</code></th><td>Browse the taxonomy</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="split__code">
+      {{ snippet("connect-url", "Endpoint", connect.url) }}
+      {{ snippet("connect-add", "Claude Code", connect.add) }}
+      {{ snippet("connect-call", "Call a tool by hand", connect.call) }}
+    </div>
+  </div>
+</section>
+
+<section class="container section" aria-labelledby="http-title">
+  <h2 id="http-title">Use it over HTTP</h2>
+  <div class="split">
+    <div class="split__text">
+      <p>The same catalog is available as a JSON API, documented in the <a href="/docs">API reference</a>. Versions accept an exact number or <code>latest</code>.</p>
+      <p>The <code>alx</code> command line client wraps these calls. It searches the catalog, downloads a package, verifies its SHA-256 and extracts it safely into a directory.</p>
+    </div>
+    <div class="split__code">
+      {{ snippet("rest-search", "Search", connect.search) }}
+      {{ snippet("rest-entrypoint", "Read an entry point", connect.entrypoint) }}
+      {{ snippet("rest-download", "Download a package", connect.download) }}
+      {{ snippet("alx-pull", "alx", connect.alx) }}
+    </div>
+  </div>
+</section>
+
+{% if recent %}
+<section class="container section" aria-labelledby="recent-title">
+  <div class="section__head">
+    <h2 id="recent-title">Recently updated</h2>
+    <a class="more" href="/registry?sort=updated">See all {{ icon("arrow") }}</a>
+  </div>
+  <ol class="cards cards--grid">
+    {% for skill in recent %}
+    <li>{{ entry_card(skill) }}</li>
+    {% endfor %}
+  </ol>
+</section>
+{% endif %}
+{% endblock %}

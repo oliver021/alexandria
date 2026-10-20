@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% from "macros.html" import icon, tree, tree_note %}
+{% block title %}{{ file.path }} · {{ name }} {{ version }} · Alexandria{% endblock %}
+{% block description %}File {{ file.path }} from version {{ version }} of {{ name }}.{% endblock %}
+{% block content %}
+<div class="container filepage">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="/registry">Registry</a></li>
+      <li><a href="{{ version_url(name, version) }}">{{ name }}</a></li>
+      <li><span>v{{ version }}</span></li>
+      <li><span aria-current="page">{{ file.path }}</span></li>
+    </ol>
+  </nav>
+
+  <header class="filehead">
+    <h1><code>{{ file.path }}</code></h1>
+    <ul class="facts">
+      <li><span class="facts__label">Size</span>{{ file.size|human_size }}</li>
+      <li><span class="facts__label">Type</span>{{ file.media_type }}</li>
+      <li><span class="facts__label">Version</span>{{ version }}</li>
+      <li><span class="facts__label">SHA-256</span><code class="hash">{{ file.sha256 }}</code></li>
+    </ul>
+    <p class="actions">
+      <a class="button" href="{{ raw_url(name, version, file.path) }}">{{ icon("download") }}{% if file.text %}Raw file{% else %}Download file{% endif %}</a>
+      <a class="button" href="{{ version_url(name, version) }}">Back to {{ name }}</a>
+    </p>
+  </header>
+
+  <div class="filepage__grid">
+    <aside class="panel filepage__tree" aria-labelledby="tree-title">
+      <h2 id="tree-title">Files <span class="panel__count">{{ file_count }}</span></h2>
+      {{ tree(tree_nodes, name, version) }}
+      {{ tree_note(tree_shown, file_count, name, version) }}
+    </aside>
+
+    <section class="filepage__content" aria-label="File contents">
+      {% if file.text %}
+      {% if file.truncated %}
+      <p class="notice notice--info">This file is larger than the preview limit, so only the first part is shown. Use the raw file to read all of it.</p>
+      {% endif %}
+      <div class="code">
+        <div class="code__bar">
+          <span class="code__label">{{ file.media_type }}</span>
+          <button type="button" class="button button--small" data-copy="file-content" hidden>{{ icon("copy") }}<span>Copy</span></button>
+        </div>
+        <pre id="file-content" tabindex="0"><code>{{ text }}</code></pre>
+      </div>
+      {% else %}
+      <div class="binary">
+        <span class="binary__icon">{{ icon("binary") }}</span>
+        <h2>Binary file</h2>
+        <p>This file is not text, so it cannot be previewed. Download it to inspect it, and compare the SHA-256 above with the one you compute.</p>
+        <p><a class="button button--primary" href="{{ raw_url(name, version, file.path) }}">{{ icon("download") }}Download {{ file.size|human_size }}</a></p>
+      </div>
+      {% endif %}
+    </section>
+  </div>
+</div>
+{% endblock %}

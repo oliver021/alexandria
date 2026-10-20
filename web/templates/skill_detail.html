@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% from "macros.html" import icon, snippet, kind_badge, status_badge, tag_list, tree, tree_note %}
+{% block title %}{{ info.display_name }} {{ info.version }} · Alexandria{% endblock %}
+{% block description %}{{ info.description|truncate(160) }}{% endblock %}
+{% block content %}
+<div class="container detail">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="/registry">Registry</a></li>
+      <li><span aria-current="page">{{ skill.name }}</span></li>
+    </ol>
+  </nav>
+
+  <header class="detail__head">
+    <h1>{{ info.display_name }}</h1>
+    <p class="detail__ids">
+      <code class="detail__name">{{ skill.name }}</code>
+      {{ kind_badge(skill.kind) }}
+      <span class="version version--large">v{{ info.version }}</span>
+      {% if info.version == skill.latest_version %}<span class="tag-latest">latest</span>{% endif %}
+      {% if info.status != "published" %}{{ status_badge(info.status) }}{% endif %}
+    </p>
+    <p class="detail__description">{{ info.description }}</p>
+    {{ tag_list(info.tags, info.category) }}
+    <ul class="facts">
+      <li><span class="facts__label">Versions</span><a href="#versions">{{ skill.versions|length }}</a></li>
+      <li><span class="facts__label">Published</span><time datetime="{{ (info.published_at or info.created_at).isoformat() }}">{{ (info.published_at or info.created_at)|iso_date }}</time></li>
+      <li><span class="facts__label">Package</span>{{ info.size_bytes|human_size }}</li>
+      <li><span class="facts__label">Files</span>{{ file_count }}</li>
+      <li><span class="facts__label">SHA-256</span><code title="{{ info.sha256 }}">{{ info.sha256|short_sha }}&hellip;</code></li>
+    </ul>
+  </header>
+
+  {% if info.status == "deprecated" %}
+  <p class="notice notice--warn"><span>Version {{ info.version }} is deprecated{% if info.deprecated_at %} since <time datetime="{{ info.deprecated_at.isoformat() }}">{{ info.deprecated_at|iso_date }}</time>{% endif %}. It still downloads, but a newer version is preferred.</span>{% if skill.latest_version %} <a href="{{ skill_url(skill.name) }}">View the latest version</a>{% endif %}</p>
+  {% elif outdated %}
+  <p class="notice notice--info"><span>You are viewing version {{ info.version }}. The latest version is {{ skill.latest_version }}.</span> <a href="{{ skill_url(skill.name) }}">View the latest version</a></p>
+  {% endif %}
+
+  <div class="detail__grid">
+    <section class="panel detail__use" aria-labelledby="use-title">
+      <h2 id="use-title">Use this version</h2>
+      {% for item in snippets %}
+      {{ snippet(item.id, item.label, item.text) }}
+      {% endfor %}
+      <p class="panel__foot"><a href="{{ download_path(skill.name, info.version) }}">{{ icon("download") }}Download {{ skill.name }}-{{ info.version }}.zip</a></p>
+    </section>
+
+    <article class="panel detail__entry" aria-labelledby="entry-title">
+      <header class="panel__head">
+        <p id="entry-title" class="panel__title"><code>{{ entry.path }}</code></p>
+        <a class="panel__action" href="{{ file_url(skill.name, info.version, entry.path) }}">View source</a>
+      </header>
+      {% if entry.truncated or clipped %}
+      <p class="notice notice--info">This entry point is long, so only the first part is rendered here. <a href="{{ file_url(skill.name, info.version, entry.path) }}">Open the file</a> to read it as plain text.</p>
+      {% endif %}
+      <div class="prose">{{ body }}</div>
+    </article>
+
+    <section class="panel detail__files" aria-labelledby="files-title">
+      <h2 id="files-title">Files <span class="panel__count">{{ file_count }}</span></h2>
+      {{ tree(tree_nodes, skill.name, info.version) }}
+      {{ tree_note(tree_shown, file_count, skill.name, info.version) }}
+    </section>
+
+    {% if metadata %}
+    <section class="panel detail__meta" aria-labelledby="meta-title">
+      <h2 id="meta-title">Metadata</h2>
+      <dl class="meta">
+        {% for key, value in metadata %}
+        <div><dt>{{ key }}</dt><dd>{{ value }}</dd></div>
+        {% endfor %}
+      </dl>
+    </section>
+    {% endif %}
+
+    <section class="panel detail__versions" id="versions" aria-labelledby="versions-title">
+      <h2 id="versions-title">Versions <span class="panel__count">{{ skill.versions|length }}</span></h2>
+      <div class="table-wrap" tabindex="0" role="region" aria-label="Versions table">
+        <table class="versions">
+          <thead>
+            <tr>
+              <th scope="col">Version</th>
+              <th scope="col">Status</th>
+              <th scope="col">Date</th>
+              <th scope="col" class="num">Size</th>
+              <th scope="col">SHA-256</th>
+              <th scope="col">Download</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in skill.versions %}
+            <tr{% if item.version == info.version %} class="is-selected"{% endif %}>
+              <th scope="row"><a href="{{ version_url(skill.name, item.version) }}"{% if item.version == info.version %} aria-current="true"{% endif %}>{{ item.version }}</a>{% if item.version == skill.latest_version %} <span class="tag-latest">latest</span>{% endif %}</th>
+              <td>{{ status_badge(item.status) }}</td>
+              <td><time datetime="{{ (item.published_at or item.created_at).isoformat() }}">{{ (item.published_at or item.created_at)|iso_date }}</time></td>
+              <td class="num">{{ item.size_bytes|human_size }}</td>
+              <td><code title="{{ item.sha256 }}">{{ item.sha256|short_sha }}</code></td>
+              <td><a class="download" href="{{ download_path(skill.name, item.version) }}">{{ icon("download") }}<span>Download<span class="visually-hidden"> version {{ item.version }}</span></span></a></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</div>
+{% endblock %}

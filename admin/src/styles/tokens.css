@@ -1,0 +1,93 @@
+:root {
+  color-scheme: light dark;
+
+  --bg: #f6f3ec;
+  --surface: #ffffff;
+  --surface-2: #faf8f3;
+  --sunk: #ece7db;
+  --code-bg: #f1ece1;
+  --text: #1f1c17;
+  --muted: #575146;
+  --faint: #665f52;
+  --rule: #e0d9c9;
+  --border: #857d6b;
+
+  --accent: #8b3a1d;
+  --accent-hover: #6f2c14;
+  --accent-bg: #f4e2d9;
+  --on-accent: #ffffff;
+  --focus: #1f5fbf;
+
+  --ok: #1f6135;
+  --ok-bg: #dcefe1;
+  --warn: #7a4f00;
+  --warn-bg: #f7e9c4;
+  --danger: #a12020;
+  --danger-hover: #7f1717;
+  --danger-bg: #fbe3e1;
+  --info: #1f4f8a;
+  --info-bg: #dfe9f7;
+  --skill: #8b3a1d;
+  --skill-bg: #f4e2d9;
+  --grounding: #1d5c63;
+  --grounding-bg: #d9ebec;
+  --neutral: #4a453c;
+  --neutral-bg: #e9e4d8;
+
+  --shadow-sm: 0 1px 2px rgb(31 28 23 / 0.06);
+  --shadow-md: 0 1px 3px rgb(31 28 23 / 0.08), 0 10px 28px rgb(31 28 23 / 0.1);
+  --backdrop: rgb(20 18 15 / 0.5);
+
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
+    sans-serif;
+  --font-serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia,
+    'Noto Serif', serif;
+  --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono',
+    'DejaVu Sans Mono', monospace;
+
+  --radius: 10px;
+  --radius-sm: 7px;
+  --container: 76rem;
+  --header-height: 3.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #14120f;
+    --surface: #1c1915;
+    --surface-2: #211e19;
+    --sunk: #2a2620;
+    --code-bg: #0f0d0b;
+    --text: #ece6d8;
+    --muted: #c0b8a6;
+    --faint: #a79f8c;
+    --rule: #38332a;
+    --border: #7d7565;
+
+    --accent: #e8a07c;
+    --accent-hover: #f2b898;
+    --accent-bg: #3a2418;
+    --on-accent: #14120f;
+    --focus: #7fb0ff;
+
+    --ok: #7fd09a;
+    --ok-bg: #16341f;
+    --warn: #e9c46a;
+    --warn-bg: #3b2d0a;
+    --danger: #ff9d94;
+    --danger-hover: #ffb9b2;
+    --danger-bg: #431a17;
+    --info: #9cc2f5;
+    --info-bg: #172a45;
+    --skill: #e8a07c;
+    --skill-bg: #3a2418;
+    --grounding: #78c5ca;
+    --grounding-bg: #14393c;
+    --neutral: #cfc7b4;
+    --neutral-bg: #2f2b24;
+
+    --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
+    --shadow-md: 0 1px 3px rgb(0 0 0 / 0.5), 0 10px 28px rgb(0 0 0 / 0.45);
+    --backdrop: rgb(0 0 0 / 0.65);
+  }
+}
